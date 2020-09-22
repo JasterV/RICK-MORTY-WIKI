@@ -1,4 +1,4 @@
-# RICK & MORTY WIKI
+# [RICK & MORTY WIKI](https://jasterv.github.io/RICK-MORTY-WIKI/)
 
 In this project I have developed a web page that makes requests to the API of rick and morty to extract data about the series in a dynamic way.
 
