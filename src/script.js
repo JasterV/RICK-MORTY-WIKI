@@ -20,25 +20,25 @@ $(function () {
 
     $(".episodes").on("click", "li", function (e) {
         var id = $(e.target).attr("data-episode");
-        var mainId = $('main').attr("id");
+        var mainId = $('[role="main"]').attr("id");
         if ("episode-" + id != mainId)
             show(id, "episode")
     });
 
-    $('main').on("click", ".character-card", function (e) {
+    $('[role="main"]').on("click", ".character-card", function (e) {
         var id = $(e.currentTarget).attr("data-character");
         show(id, "character")
     });
 
-    $('main').on("click", ".episode-card", function (e) {
+    $('[role="main"]').on("click", ".episode-card", function (e) {
         var id = $(e.currentTarget).attr("data-episode");
         show(id, "episode")
     });
 
-    $('main').on("click", ".morty-btn", function (e) {
-        var characterId = $(e.target).closest('main').attr("id").split("-")[1];
+    $('[role="main"]').on("click", ".morty-btn", function (e) {
+        var characterId = $(e.target).closest('[role="main"]').attr("id").split("-")[1];
         var character = controller.characters[characterId];
-        if(character.origin.name == "unknown") return;
+        if (character.origin.name == "unknown") return;
         show(characterId, "location")
     });
 
@@ -72,8 +72,8 @@ function populateData(urls, type) {
 /* SHOW TYPE FUNCTIONS */
 
 function show(id, type) {
-    $('main').empty();
-    $('main').attr("id", type + "-" + id);
+    $('[role="main"]').empty();
+    $('[role="main"]').attr("id", type + "-" + id);
     if (type == "episode")
         showEpisode(id);
     else if (type == "character")
@@ -84,27 +84,27 @@ function show(id, type) {
 
 function showEpisode(id) {
     var episode = controller.episodes[id];
-    $('main').append(createTemplate(episode, "episode"));
+    $('[role="main"]').append(createTemplate(episode, "episode"));
     populateData(episode.characters, "characters");
 }
 
 function showCharacter(id) {
     var character = controller.characters[id];
-    $('main').append(createTemplate(character, "character"));
+    $('[role="main"]').append(createTemplate(character, "character"));
     populateData(character.episode, "episodes");
 }
 
 function showLocation(characterId) {
     var character = controller.characters[characterId];
-    var originId = getIdFromURL(character.origin.url);    
+    var originId = getIdFromURL(character.origin.url);
     if (originId in controller.locations) {
         var origin = controller.locations[originId];
-        $('main').append(createTemplate(origin, "location"));
+        $('[role="main"]').append(createTemplate(origin, "location"));
         populateData(origin.residents, "characters")
     } else {
         getData(character.origin.url).then(function (location) {
             controller.locations[location.id] = location;
-            $('main').append(createTemplate(location, "location"));
+            $('[role="main"]').append(createTemplate(location, "location"));
             populateData(location.residents, "characters")
         });
     }
@@ -129,16 +129,13 @@ function createLocationTemplate(location) {
 }
 
 function createCharacterTemplate(character) {
-    return $(`<div class="character-header">
-                    <img src="${character.image}"/>
-                    <div class="character-info">
-                        <h1>${character.name}</h1>
-                        <p>${character.species} <strong>|</strong> ${character.status} <strong>|</strong> ${character.gender} <strong>|</strong> ${character.origin.name}</p>
-                        <button class="morty-btn">Location</button>
-                    </div>
-                </div>
-                <div class="cards-list"></div>
-            `);
+    return $("<div class=\"character-header\"><img src=\"" + character.image +
+        "\"/><div class=\"character-info\"><h1>" + character.name +
+        "</h1><p>" + character.species +
+        " <strong>|</strong> " + character.status +
+        "<strong>|</strong> " + character.gender +
+        " <strong>|</strong> " + character.origin.name +
+        "</p><button class=\"morty-btn\">Location</button></div> </div><div class=\"cards-list\"></div>");
 }
 
 function createEpisodeTemplate(episode) {
@@ -165,10 +162,9 @@ function createCharacterCard(character) {
 }
 
 function createEpisodeCard(episode) {
-    return $(`<div class="episode-card" data-episode="${episode.id}">
-                <h2><strong>${episode.name}</strong></h2>
-                <p>${episode.episode}</p>
-                </div>`);
+    return $("<div class=\"episode-card\" data-episode=\"" + episode.id +
+                "\"><h2><strong>" + episode.name +
+                "</strong></h2><p>" + episode.episode + "</p></div>");
 }
 
 /* AJAX FUNCTIONS */
