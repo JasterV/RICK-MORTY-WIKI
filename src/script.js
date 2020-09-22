@@ -8,7 +8,11 @@ var controller = {
 }
 
 $(function () {
-    axios.get(ENDPOINT).then(function (result) {
+    axios({
+        method: "get",
+        url: ENDPOINT,
+        dataType: "jsonp"
+    }).then(function (result) {
         var routes = result.data;
         controller.next = routes.episodes;
         loadNextPage().then(function () {
@@ -38,7 +42,7 @@ $(function () {
     $('main').on("click", ".morty-btn", function (e) {
         var characterId = $(e.target).closest('main').attr("id").split("-")[1];
         var character = controller.characters[characterId];
-        if(character.origin.name == "unknown") return;
+        if (character.origin.name == "unknown") return;
         show(characterId, "location")
     });
 
@@ -96,7 +100,7 @@ function showCharacter(id) {
 
 function showLocation(characterId) {
     var character = controller.characters[characterId];
-    var originId = getIdFromURL(character.origin.url);    
+    var originId = getIdFromURL(character.origin.url);
     if (originId in controller.locations) {
         var origin = controller.locations[originId];
         $('main').append(createTemplate(origin, "location"));
@@ -174,7 +178,11 @@ function createEpisodeCard(episode) {
 /* AJAX FUNCTIONS */
 
 function getData(url) {
-    return axios.get(url).then(function (result) {
+    return axios({
+        method: "get",
+        url: url,
+        dataType: "jsonp"
+    }).then(function (result) {
         return result.data;
     });
 }
