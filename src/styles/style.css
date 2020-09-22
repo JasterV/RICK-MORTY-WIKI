@@ -45,7 +45,7 @@ header {
 
 /* MAIN CONTAINER STYLE */
 
-[role="main"] {
+main {
     -ms-grid-row: 2;
     -ms-grid-column: 2;
     grid-area: main;
@@ -58,7 +58,7 @@ header {
     flex-direction: column;
 }
 
-[role="main"] h1 {
+main h1 {
     color: var(--rick-blue);
     margin: 1.5rem;
 }

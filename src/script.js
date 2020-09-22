@@ -19,28 +19,25 @@ $(function () {
     $("#load-more").click(loadNextPage);
 
     $(".episodes").on("click", "li", function (e) {
-        var episode = $(e.target).attr("data-episode");
-        var mainId = $('[role="main"]').attr("id");
-        if ("episode-" + episode != mainId)
-            showEpisode(episode);
+        var id = $(e.target).attr("data-episode");
+        var mainId = $('main').attr("id");
+        if ("episode-" + id != mainId)
+            show(id, "episode")
     });
 
-    $('[role="main"]').on("click", ".character-card", function (e) {
+    $('main').on("click", ".character-card", function (e) {
         var id = $(e.currentTarget).attr("data-character");
-        showCharacter(id);
+        show(id, "character")
     });
 
-
-    $('[role="main"]').on("click", ".episode-card", function (e) {
+    $('main').on("click", ".episode-card", function (e) {
         var id = $(e.currentTarget).attr("data-episode");
-        showEpisode(id);
+        show(id, "episode")
     });
 
-
-    $('[role="main"]').on("click", ".morty-btn", function (e) {
-        var characterId = $(e.target).closest('[role="main"]').attr("id");
-        characterId = characterId.split("-")[1];
-        showLocation(characterId);
+    $('main').on("click", ".morty-btn", function (e) {
+        var characterId = $(e.target).closest('main').attr("id").split("-")[1];
+        show(characterId ,"location")
     });
 });
 
@@ -57,7 +54,7 @@ function loadNextPage() {
     });
 }
 
-function loadAll(urls, type) {
+function populateData(urls, type) {
     var storage = controller[type];
     getAllData(urls, storage).then(function (data) {
         data.forEach(function (elem) {
@@ -69,37 +66,42 @@ function loadAll(urls, type) {
 
 /* SHOW TYPE FUNCTIONS */
 
+function show(id, type) {
+    $('main').empty();
+    $('main').attr("id", type + "-" + id);
+    if(type == "episode")
+        showEpisode(id);
+    else if(type == "character")
+        showCharacter(id);
+    else if (type == "location")
+        showLocation(id);
+}
+
 function showEpisode(id) {
     var episode = controller.episodes[id];
-    $('[role="main"]').empty();
-    $('[role="main"]').append(createTemplate(episode, "episode"));
-    $('[role="main"]').attr("id", "episode-" + episode.id);
-    loadAll(episode.characters, "characters");
+    $('main').append(createTemplate(episode, "episode"));
+    populateData(episode.characters, "characters");
 }
 
 function showCharacter(id) {
     var character = controller.characters[id];
-    $('[role="main"]').empty();
-    $('[role="main"]').attr("id", "character-" + id);
-    $('[role="main"]').append(createTemplate(character, "character"));
-    loadAll(character.episode, "episodes");
+    $('main').append(createTemplate(character, "character"));
+    populateData(character.episode, "episodes");
 }
 
 function showLocation(characterId) {
     var character = controller.characters[characterId];
-    var originUrl = character.origin.url;
-    var originId = getIdFromURL(originUrl);
-    $('[role="main"]').empty();
-    $('[role="main"]').attr("id", "location-" + originId);
+    var originId = getIdFromURL(character.origin.url);
+    
     if (originId in controller.locations) {
         var origin = controller.locations[originId];
-        $('[role="main"]').append(createTemplate(origin, "location"));
-        loadAll(origin.residents, "characters")
+        $('main').append(createTemplate(origin, "location"));
+        populateData(origin.residents, "characters")
     } else {
-        getData(originUrl).then(function (location) {
+        getData(character.origin.url).then(function (location) {
             controller.locations[location.id] = location;
-            $('[role="main"]').append(createTemplate(location, "location"));
-            loadAll(location.residents, "characters")
+            $('main').append(createTemplate(location, "location"));
+            populateData(location.residents, "characters")
         });
     }
 }
