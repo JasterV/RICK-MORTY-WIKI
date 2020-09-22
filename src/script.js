@@ -27,11 +27,146 @@ $(function () {
 
     $('[role="main"]').on("click", ".character-card", function (e) {
         var id = $(e.currentTarget).attr("data-character");
-        showCharacterInfo(id);
+        showCharacter(id);
+    });
+
+
+    $('[role="main"]').on("click", ".episode-card", function (e) {
+        var id = $(e.currentTarget).attr("data-episode");
+        showEpisode(id);
+    });
+
+
+    $('[role="main"]').on("click", ".morty-btn", function (e) {
+        var characterId = $(e.target).closest('[role="main"]').attr("id");
+        characterId = characterId.split("-")[1];
+        showLocation(characterId);
     });
 });
 
+/* LOAD FUNCTIONS */
+
+function loadNextPage() {
+    if (controller.next == null) return;
+    return getData(controller.next).then(function (page) {
+        controller.next = page.info.next;
+        page.results.forEach(function (episode) {
+            controller.episodes[episode.id] = episode;
+            $(".episodes").append($('<li data-episode="' + episode.id + '">Episode ' + episode.id + '</li>'))
+        });
+    });
+}
+
+function loadAll(urls, type) {
+    var storage = controller[type];
+    getAllData(urls, storage).then(function (data) {
+        data.forEach(function (elem) {
+            storage[elem.id] = elem;
+            $(".cards-list").append(createCard(elem, type));
+        });
+    });
+}
+
+/* SHOW TYPE FUNCTIONS */
+
+function showEpisode(id) {
+    var episode = controller.episodes[id];
+    $('[role="main"]').empty();
+    $('[role="main"]').append(createTemplate(episode, "episode"));
+    $('[role="main"]').attr("id", "episode-" + episode.id);
+    loadAll(episode.characters, "characters");
+}
+
+function showCharacter(id) {
+    var character = controller.characters[id];
+    $('[role="main"]').empty();
+    $('[role="main"]').attr("id", "character-" + id);
+    $('[role="main"]').append(createTemplate(character, "character"));
+    loadAll(character.episode, "episodes");
+}
+
+function showLocation(characterId) {
+    var character = controller.characters[characterId];
+    var originUrl = character.origin.url;
+    var originId = getIdFromURL(originUrl);
+    $('[role="main"]').empty();
+    $('[role="main"]').attr("id", "location-" + originId);
+    if (originId in controller.locations) {
+        var origin = controller.locations[originId];
+        $('[role="main"]').append(createTemplate(origin, "location"));
+        loadAll(origin.residents, "characters")
+    } else {
+        getData(originUrl).then(function (location) {
+            controller.locations[location.id] = location;
+            $('[role="main"]').append(createTemplate(location, "location"));
+            loadAll(location.residents, "characters")
+        });
+    }
+}
+
+/** TEMPLATES  */
+
+function createTemplate(elem, type) {
+    if (type == "character")
+        return createCharacterTemplate(elem);
+    else if (type == "episode")
+        return createEpisodeTemplate(elem);
+    else if (type == "location")
+        return createLocationTemplate(elem);
+    return $("");
+}
+
+function createLocationTemplate(location) {
+    return $("<h1>" + location.name + "</h1>" +
+        "<p class=\"subtitle\"> " + location.type + " <strong>" + location.dimension + "</strong></p>" +
+        "<div class=\"cards-list\"></div>");
+}
+
+function createCharacterTemplate(character) {
+    return $(`<div class="character-header">
+                    <img src="${character.image}"/>
+                    <div class="character-info">
+                        <h1>${character.name}</h1>
+                        <p>${character.species} <strong>|</strong> ${character.status} <strong>|</strong> ${character.gender} <strong>|</strong> ${character.origin.name}</p>
+                        <button class="morty-btn">Location</button>
+                    </div>
+                </div>
+                <div class="cards-list"></div>
+            `);
+}
+
+function createEpisodeTemplate(episode) {
+    return $("<h1>" + episode.name + "</h1>" +
+        "<p class=\"subtitle\"> " + episode.air_date + " <strong>" + episode.episode + "</strong></p>" +
+        "<div class=\"cards-list\"></div>");
+}
+
+/** CARDS */
+
+function createCard(elem, type) {
+    if (type == "characters")
+        return createCharacterCard(elem);
+    else if (type == "episodes")
+        return createEpisodeCard(elem);
+    return $("");
+}
+
+function createCharacterCard(character) {
+    return $("<div class=\"character-card\" data-character=\"" + character.id + "\"><img src=\"" + character.image +
+        "\"/><h3>" + character.name + "</h3><p>" +
+        character.species + " <strong>| " +
+        character.status + "</strong></p> </div>");
+}
+
+function createEpisodeCard(episode) {
+    return $(`<div class="episode-card" data-episode="${episode.id}">
+                <h2><strong>${episode.name}</strong></h2>
+                <p>${episode.episode}</p>
+                </div>`);
+}
+
 /* AJAX FUNCTIONS */
+
 function getData(url) {
     return axios.get(url).then(function (result) {
         return result.data;
@@ -46,85 +181,25 @@ function getAll(arr) {
     );
 }
 
-/* PAGES FUNCTIONS */
-
-function loadNextPage() {
-    if (controller.next == null) return;
-    return getData(controller.next).then(function (page) {
-        controller.next = page.info.next;
-        page.results.forEach(function (episode) {
-            controller.episodes[episode.id] = episode;
-            $(".episodes").append($('<li data-episode="' + episode.id + '">Episode ' + episode.id + '</li>'))
-        });
-
-    });
-}
-
-/* EPISODES FUNCTIONS */
-
-function showEpisode(id) {
-    var episode = controller.episodes[id];
-    $('[role="main"]').empty();
-    $('[role="main"]').append(createEpisodeTemplate(episode));
-    $('[role="main"]').attr("id", "episode-" + episode.id);
-    loadEpisodeCharacters(episode.id);
-}
-
-function loadEpisodeCharacters(episodeId) {
-    getEpisodeCharacters(episodeId).then(function (characters) {
-        characters.forEach(function (character) {
-            controller.characters[character.id] = character;
-            $(".cards-list").append(createCharacterCard(character));
-        });
-    });
-}
-
-function createEpisodeTemplate(episode) {
-    return $("<h1>" + episode.name + "</h1>" +
-        "<p class=\"subtitle\"> " + episode.air_date + " <strong>" + episode.episode + "</strong></p>" +
-        "<div class=\"cards-list\"></div>");
-}
-
-/* CHARACTERS FUNCTIONS */
-
-function getEpisodeCharacters(episodeId) {
-    var episode = controller.episodes[episodeId];
+function getAllData(urls, storage) {
     var visiteds = [],
-        urls = [];
-    for (var i = 0; i < episode.characters.length; i++) {
-        var splited = episode.characters[i].split('/');
-        var id = splited[splited.length - 1];
-        if (id in controller.characters)
-            visiteds.push(controller.characters[id]);
+        nVisiteds = [];
+    for (var i = 0; i < urls.length; i++) {
+        var id = getIdFromURL(urls[i]);
+        if (id in storage)
+            visiteds.push(storage[id]);
         else
-            urls.push(episode.characters[i]);
+            nVisiteds.push(urls[i]);
     }
-    return getAll(urls).then(function (characters) {
-        return visiteds.concat(characters);
+    return getAll(nVisiteds).then(function (data) {
+        return visiteds.concat(data);
     });
 }
 
-function createCharacterCard(character) {
-    return $("<div class=\"character-card\" data-character=\"" + character.id + "\"><img src=\"" + character.image +
-        "\"/><h3>" + character.name + "</h3><p>" +
-        character.species + " <strong>| " +
-        character.status + "</strong></p> </div>");
-}
+/** UTIL FUNCTIONS */
 
-function showCharacterInfo(id) {
-    var character = controller.characters[id];
-    $('[role="main"]').empty();
-    $('[role="main"]').append(createCharacterTemplate(character));
-    $('[role="main"]').attr("id", "character-"+id);
-    console.log(character);
-}
-
-function createCharacterTemplate(character) {
-    return $(`<div class="character-header">
-                <img src="${character.image}"/>
-                <div class="character-info">
-                    <h3>${character.name}</h3>
-                    <p>${character.species} <strong>|</strong> ${character.status} <strong>|</strong> ${character.gender} <strong>|</strong> ${character.origin.name}</p>
-                </div>
-            `);
+function getIdFromURL(url) {
+    var splited = url.split('/');
+    var id = splited[splited.length - 1];
+    return id;
 }

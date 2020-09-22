@@ -14,7 +14,8 @@ h1 {
     font-family: 'get-schwifty';
     text-shadow: 0px 0px 20px var(--rick-text);
     color: var(--rick-blue);
-    -webkit-text-stroke: 2px var(--rick-green); /* width and color */
+    -webkit-text-stroke: 2px var(--rick-green);
+    /* width and color */
 }
 
 body {
@@ -26,8 +27,8 @@ body {
     grid-template-columns: 1fr 3.5fr;
     -ms-grid-rows: 15vh 85vh;
     grid-template-rows: 15vh 85vh;
-        grid-template-areas: "header header"
-                         "sidebar main";
+    grid-template-areas: "header header"
+        "sidebar main";
     background-image: url("../../assets/img/wp1822796-rick-and-morty-wallpapers.jpg");
     font-family: 'Grandstander', cursive;
 }
@@ -57,7 +58,7 @@ header {
     flex-direction: column;
 }
 
-[role="main"] h1  {
+[role="main"] h1 {
     color: var(--rick-blue);
     margin: 1.5rem;
 }
@@ -82,6 +83,11 @@ strong {
     overflow-y: auto;
 }
 
+.cards-list>*:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
 /* CHARACTER CARD STYLE */
 
 .character-card {
@@ -96,6 +102,64 @@ strong {
 .character-card h3 {
     color: var(--rick-blue);
     margin-bottom: .5rem;
+}
+
+.character-header {
+    display: flex;
+    justify-content: start;
+    padding: 1rem 2rem;
+}
+
+.character-header img {
+    width: 250px;
+}
+
+.character-info {
+    text-align: start;
+    padding-left: 2.5rem;
+}
+
+.character-info h1 {
+    margin: 0;
+    margin-bottom: 1.5rem;
+}
+
+.character-info p {
+    font-size: 1.4rem;
+}
+
+.character-header+.cards-list {
+    text-align: start;
+    padding: 1rem 2rem;
+}
+
+.episode-card {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 1rem;
+    margin: .7rem;
+    border: 2px solid var(--rick-green);
+    font-size: 1.5rem;
+    border-radius: 5px;
+}
+
+.episode-card h2 {
+    margin-bottom: 2rem;
+}
+
+.morty-btn {
+    font-weight: bold;
+    font-family: 'Grandstander', cursive;
+    border-radius: 5px;
+    border: 2px var(--rick-green);
+    border-style: solid;
+    background-color: transparent;
+    padding: .5rem 1rem;
+    font-size: 2rem;
+    color: var(--rick-blue);
+    margin-top: 2rem;
 }
 
 /* SIDEBAR STYLE */
@@ -114,7 +178,8 @@ aside {
 }
 
 .episodes {
-    -webkit-text-stroke: 1px var(--rick-green); /* width and color */
+    -webkit-text-stroke: 1px var(--rick-green);
+    /* width and color */
     font-size: 2.5rem;
     padding: 0rem 1rem;
     margin: 0 auto;
@@ -144,11 +209,12 @@ aside h1 {
     font-size: 2rem;
     text-shadow: 0px 0px 20px var(--rick-text);
     color: var(--rick-blue);
-    -webkit-text-stroke: 1px var(--rick-green); /* width and color */
+    -webkit-text-stroke: 1px var(--rick-green);
+    /* width and color */
     margin: 1rem auto;
 }
 
-.rick-btn:hover {
+button:hover {
     cursor: pointer;
     transform: scale(1.1);
 }
@@ -160,21 +226,16 @@ aside h1 {
 
 /* SCROLLBAR STYLE */
 
-*::-webkit-scrollbar-track
-{
+*::-webkit-scrollbar-track {
     background-color: transparent;
 }
 
-*::-webkit-scrollbar
-{
+*::-webkit-scrollbar {
     width: 10px;
     background-color: transparent;
 }
 
-*::-webkit-scrollbar-thumb
-{
+*::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: var(--rick-green);
 }
-
-  
