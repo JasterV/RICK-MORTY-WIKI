@@ -23,13 +23,15 @@ body {
     display: grid;
     overflow: hidden;
     height: 100vh;
+    width: 100%;
     -ms-grid-columns: 1fr 3.5fr;
     grid-template-columns: 1fr 3.5fr;
     -ms-grid-rows: 15vh 85vh;
     grid-template-rows: 15vh 85vh;
     grid-template-areas: "header header"
-        "sidebar main";
+                         "sidebar main";
     background-image: url("../../assets/img/wp1822796-rick-and-morty-wallpapers.jpg");
+    background-size: cover;
     font-family: 'Grandstander', cursive;
 }
 
@@ -41,6 +43,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
 }
 
 /* MAIN CONTAINER STYLE */
@@ -51,16 +54,18 @@ main {
     grid-area: main;
     background-color: white;
     border-radius: 15px;
-    margin: 1rem 4rem 3rem 0rem;
+    margin: 1rem 3rem 3rem 0rem;
     text-align: center;
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 main h1 {
     color: var(--rick-blue);
     margin: 1.5rem;
+    word-break: break-all;
 }
 
 .subtitle {
@@ -80,7 +85,7 @@ strong {
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 1rem;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 .cards-list>*:hover {
@@ -170,11 +175,28 @@ aside {
     min-width: 250px;
     grid-area: sidebar;
     text-align: center;
-    padding-top: 1rem;
+    padding: 1rem .5rem 0rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     margin-bottom: 3rem;
+    opacity: 1;
+}
+
+.fas.aside-btn {
+    display: none;
+    position: absolute;
+    top: 15vh;
+    transform: translate(-50%, 50%);
+    right: 1rem;
+    font-size: 2.5rem;
+    color: var(--rick-blue);
+    -webkit-text-stroke: 2px var(--rick-green);
+}
+
+.fas.aside-btn:hover {
+    cursor: pointer;
+    opacity: .8;
 }
 
 .episodes {
@@ -238,4 +260,114 @@ button:hover {
 *::-webkit-scrollbar-thumb {
     border-radius: 5px;
     background-color: var(--rick-green);
+}
+
+/* MEDIA QUERYS */
+
+@media(max-width: 1030px) {
+    h1 {
+        font-size: 3.5rem;
+    }
+    main {
+        margin: 1rem 1.5rem 3rem 0rem;
+    }
+}
+
+@media(min-width: 900px) {
+    aside {
+        opacity: 1 !important;
+        display: flex !important;
+    }
+}
+
+/* TABLET */
+
+@media(max-width: 900px) {
+    h1 {
+        font-size: 3rem;
+    }
+
+    body {
+        -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+        grid-template-areas: "header"
+                            "main";
+    }
+
+    main {
+        -ms-grid-row: 2;
+        -ms-grid-column: 1;
+        margin: 0rem 1rem 1rem;
+    }
+
+    header {
+        -ms-grid-row: 1;
+        -ms-grid-column: 1;
+        -ms-grid-column-span: 1;
+    }
+
+    aside {
+        display: none;
+        position: absolute;
+        height: 80vh;
+        background: url(../../assets/img/wp1822796-rick-and-morty-wallpapers.jpg) no-repeat;
+        background-position: bottom;
+        box-shadow: 5px 5px 5px #44465D;
+        border-radius: 0 0px 15px 0;
+        opacity: 0;
+        padding: 2rem 0rem 1rem;
+        margin-bottom: 0;
+        z-index: 99999;
+    }
+
+    li {
+        font-size: 2rem;
+    }
+
+    .fas.aside-btn {
+        display: block;
+    }
+}
+
+/* MOBILE */
+
+@media(max-width: 650px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    header h1 {
+        line-height: 4rem;
+    }
+
+    .character-header {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .character-header img {
+        width: 60%;
+    }
+
+    .character-info {
+        padding: 2rem 0rem 0rem;
+        text-align: center;
+    }
+
+    .character-info > * {
+        margin: 0 !important;
+        margin-bottom: 1rem !important;
+    }
+
+    .episode-card {
+        width: 80%;
+        margin: 0;
+        margin-bottom: 1rem;
+    }
+
+    .cards-list {
+        margin: 0;
+        padding: 0;
+    }
 }

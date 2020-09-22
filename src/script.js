@@ -37,8 +37,13 @@ $(function () {
 
     $('main').on("click", ".morty-btn", function (e) {
         var characterId = $(e.target).closest('main').attr("id").split("-")[1];
-        show(characterId ,"location")
+        var character = controller.characters[characterId];
+        if(character.origin.name == "unknown") return;
+        show(characterId, "location")
     });
+
+    /* MOBILE EVENT LISTENERS */
+    $(".aside-btn").click(toggleAside);
 });
 
 /* LOAD FUNCTIONS */
@@ -69,9 +74,9 @@ function populateData(urls, type) {
 function show(id, type) {
     $('main').empty();
     $('main').attr("id", type + "-" + id);
-    if(type == "episode")
+    if (type == "episode")
         showEpisode(id);
-    else if(type == "character")
+    else if (type == "character")
         showCharacter(id);
     else if (type == "location")
         showLocation(id);
@@ -91,8 +96,7 @@ function showCharacter(id) {
 
 function showLocation(characterId) {
     var character = controller.characters[characterId];
-    var originId = getIdFromURL(character.origin.url);
-    
+    var originId = getIdFromURL(character.origin.url);    
     if (originId in controller.locations) {
         var origin = controller.locations[originId];
         $('main').append(createTemplate(origin, "location"));
@@ -199,6 +203,21 @@ function getAllData(urls, storage) {
 }
 
 /** UTIL FUNCTIONS */
+
+function toggleAside() {
+    var display = $("aside").css("display");
+    var opacity = $("aside").css("opacity");
+    var newDisplay = display == "flex" ? "none" : "flex";
+    var newOpacity = opacity == "1" ? "0" : "1";
+    if (newOpacity == "1")
+        $("aside").css("display", "flex");
+
+    $("aside").animate({
+        opacity: newOpacity
+    }, 200, function () {
+        $("aside").css("display", newDisplay);
+    });
+}
 
 function getIdFromURL(url) {
     var splited = url.split('/');
