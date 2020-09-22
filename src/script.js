@@ -8,6 +8,7 @@ var controller = {
 }
 
 $(function () {
+    /* FETCH THE FIRST EPISODES PAGE */
     axios.get(ENDPOINT).then(function (result) {
         var routes = result.data;
         controller.next = routes.episodes;
