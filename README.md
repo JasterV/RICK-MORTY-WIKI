@@ -12,7 +12,7 @@ All css files necessary for the main style of the page are stored in the styles 
 
 The script.js file contains all the logic of the web page. All calls to the rick and morty API are made there and we'll talk about that in a moment.
 
-Also, in the assets folder I have downloaded the original source of the series to make the page as familiar as possible.
+Also, in the assets folder I have downloaded the original font family of the series logo to make the page as familiar as possible.
 
 ![Hello](assets/img/folders-diagram.png)
 
