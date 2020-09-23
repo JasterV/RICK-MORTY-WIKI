@@ -208,7 +208,6 @@ function toggleAside() {
     var newOpacity = opacity == "1" ? "0" : "1";
     if (newOpacity == "1")
         $("aside").css("display", "flex");
-
     $("aside").animate({
         opacity: newOpacity
     }, 200, function () {
