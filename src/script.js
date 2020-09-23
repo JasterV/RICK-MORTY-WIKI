@@ -13,7 +13,7 @@ $(function () {
         var routes = result.data;
         controller.next = routes.episodes;
         loadNextPage().then(function () {
-            showEpisode(1);
+            show(1, "episode");
         });
     });
     /* EVENT LISTENERS */
